@@ -10,7 +10,7 @@ apt install mc wget jq libfontconfig1 libxtst6 libxrender1 libxi6 java-common -y
 wget https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-linux_amd64.deb
 dpkg -i zulu11.48.21-ca-jdk11.0.11-linux_amd64.deb
 
-wget https://github.com/minima-global/Minima/raw/master/jar/minima.jar
+wget https://github.com/bogdankornij/avangard-nodes/blob/master/minima/minima.jar
 
 sudo apt install --fix-broken -y
 
