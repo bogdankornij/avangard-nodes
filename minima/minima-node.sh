@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo apt update && sudo apt install curl -y
-
 #add ufw rules
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash
 
