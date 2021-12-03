@@ -1,5 +1,5 @@
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/docker.sh | bash
-echo "alias ironfish='docker exec ironfish ./bin/run'" >> ~/.bashrc && source ~/.bashrc
+#!/bin/bash
+docker-compose down
 sudo tee <<EOF >/dev/null $HOME/docker-compose.yaml
 version: "3.3"
 services:
@@ -27,4 +27,6 @@ services:
   volumes:
    - $HOME/.ironfish:/root/.ironfish
 EOF
-docker-compose up -d && docker-compose logs -f --tail=100
+docker-compose pull
+docker-compose up -d
+echo "ГОТОВО!"
