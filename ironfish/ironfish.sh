@@ -1,6 +1,6 @@
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/docker.sh | bash
 echo "alias ironfish='docker exec ironfish ./bin/run'" >> ~/.bashrc && source ~/.bashrc
-sudo tee <<EOF >/dev/null $HOME/docker-compose.yaml
+tee <<EOF >/dev/null $HOME/docker-compose.yaml
 version: "3.3"
 services:
  ironfish:
