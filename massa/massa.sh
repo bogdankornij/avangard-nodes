@@ -1,5 +1,3 @@
-apt update && apt install curl -y
-
 #!/bin/bash
 
 #add ufw rules
@@ -16,7 +14,8 @@ rustup toolchain install nightly
 rustup default nightly
 cd $HOME
 if [ ! -d $HOME/massa/ ]; then
-	git clone --branch testnet https://gitlab.com/massalabs/massa.git
+	git clone https://github.com/massalabs/massa
+	cd $HOME/massa && git checkout TEST.5.0
 fi
 cd $HOME/massa/massa-node/
 cargo build --release
