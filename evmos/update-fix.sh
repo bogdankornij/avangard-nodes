@@ -17,11 +17,11 @@ cp $HOME/go/bin/evmosd $HOME/.evmosd/cosmovisor/genesis/bin
 mkdir -p $HOME/.evmosd/cosmovisor/upgrades/Olympus-Mons-v0.4.1/bin/
 cp $HOME/go/bin/evmosd $HOME/.evmosd/cosmovisor/upgrades/Olympus-Mons-v0.4.1/bin/
 
-peers="cccdaee68c9f051bd227371424b4d5db6558cbff@144.91.79.203:26656,29558c38f6894066ebafa9f156f2839db9d454f6@23.88.0.168:26656,c893e2bf76b60099eecc20d4a9671ed9d4114464@65.21.193.112:26656"
+peers="fb6cbe0069eaf39a963930b01d5f4de2c527978e@62.171.191.122:26656"
 
-sed -i.bak -e  "s/^persistent_peers *=.*/persistent_peers = \"$peers\"/" ~/.evmosd/config/config.toml
+sed -i.bak -e  "s/^persistent_peers *=.*/persistent_peers = \"$peers\"/" $HOME/.evmosd/config/config.toml
 
-SNAP_RPC="https://evmos-rpc.mercury-nodes.net:443"
+SNAP_RPC="http://194.163.164.129:26657"
 
 LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
 BLOCK_HEIGHT=$((LATEST_HEIGHT - 1000)); \
@@ -31,9 +31,33 @@ sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
 s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
 s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
 s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
-s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" ~/.evmosd/config/config.toml
+s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" $HOME/.evmosd/config/config.toml
 
 sed -i.bak -e  "s/^discovery_time *=.*/discovery_time = \"30s\"/" ~/.evmosd/config/config.toml
 
+curl -s http://65.21.193.112/addrbook.json > $HOME/.evmosd/config/addrbook.json
+
+sudo tee /etc/systemd/system/evmos.service > /dev/null <<EOF
+[Unit]
+Description=Evmos Daemon
+After=network-online.target
+
+[Service]
+User=$USER
+ExecStart=$(which cosmovisor) start
+Restart=always
+RestartSec=3
+LimitNOFILE=infinity
+
+Environment="DAEMON_HOME=$HOME/.evmosd"
+Environment="DAEMON_NAME=evmosd"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo -S systemctl daemon-reload
+sudo -S systemctl restart evmos
 
 sudo systemctl restart evmos
