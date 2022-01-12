@@ -6,16 +6,16 @@ curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw
 sudo apt update
 #sudo apt install curl make clang pkg-config libssl-dev build-essential git mc jq unzip -y
 #curl https://getsubstrate.io -sSf | bash -s -- --fast
-curl -s https://raw.githubusercontent.com/razumv/helpers/main/tools/install_rust.sh | bash
+curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/rust.sh | bash
 
 source $HOME/.cargo/env
 sleep 1
-rustup toolchain install nightly
-rustup default nightly
+rustup toolchain install nightly-2022-01-09
+rustup default nightly-2022-01-09
 cd $HOME
 if [ ! -d $HOME/massa/ ]; then
 	git clone https://github.com/massalabs/massa
-	cd $HOME/massa && git checkout TEST.5.0
+	cd $HOME/massa && git checkout TEST.6.5
 fi
 cd $HOME/massa/massa-node/
 cargo build --release
