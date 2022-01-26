@@ -10,7 +10,7 @@ var=`docker-compose logs --tail=1000 ironfish | grep "Added block to fork seq"`
 if [ -z "$var" ]
 then
   echo "Ваш майнер не в форке, выполняем обновление"
-
+  
   docker-compose down
   docker-compose pull
   docker-compose up -d
