@@ -9,7 +9,7 @@ echo "Repository cloned..."
 cd $HOME/celestia-node
 git checkout v0.1.1 &>/dev/null
 make install &>/dev/null
-echo "build finished, initialising full node..."
+echo "build finished, initializing full node..."
 
 TRUSTED_SERVER="localhost:26657"
 TRUSTED_HASH=$(curl -s $TRUSTED_SERVER/status | jq -r .result.sync_info.latest_block_hash)
@@ -42,7 +42,7 @@ FULL_NODE_IP=$(cat $HOME/multiaddress.txt | sed -r 's/^.{3}//')
 echo 'export FULL_NODE_IP='${FULL_NODE_IP} >> $HOME/.profile
 source $HOME/.profile
 
-echo "Initialising full node finished, Initialising light client..."
+echo "Initializing full node finished, Initializing light client..."
 
 rm -rf $HOME/.celestia-light
 celestia light init --headers.trusted-peer $FULL_NODE_IP --headers.trusted-hash $TRUSTED_HASH &>/dev/null
@@ -69,5 +69,5 @@ sudo systemctl enable celestia-light &>/dev/null
 sudo systemctl daemon-reload
 sudo systemctl restart celestia-light
 
-echo " Initialising light client finished!"
+echo " Initializing light client finished!"
 echo "ГОТОВО!"

@@ -1,12 +1,12 @@
 #!/bin/bash
 if [ ! $CELESTIA_NODENAME ]; then
-	read -p "Введите ваше имя ноды(придумайте, без спецсимволов - только буквы и цифры): " CELESTIA_NODENAME
+	read -p "Введите имя ноды(придумайте, без спецсимволов - только буквы и цифры): " CELESTIA_NODENAME
 fi
 sleep 1
 CELESTIA_CHAIN="devnet-2"
 echo 'export CELESTIA_CHAIN='$CELESTIA_CHAIN >> $HOME/.profile
 echo 'export CELESTIA_NODENAME='$CELESTIA_NODENAME >> $HOME/.profile
-echo "Installing soft"
+echo "Installing soft..."
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash &>/dev/null
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/go.sh | bash &>/dev/null
 sudo apt install --fix-broken -y &>/dev/null
@@ -14,7 +14,7 @@ sudo apt install nano mc wget -y &>/dev/null
 source .profile
 source .bashrc
 sleep 1
-echo "Soft installed"
+echo "Soft installed!"
 if [ ! -d $HOME/celestia-app ]; then
   git clone https://github.com/celestiaorg/celestia-app.git &>/dev/null
 fi
@@ -25,7 +25,7 @@ echo "Ropository copied, installing bild..."
 
 cd $HOME/celestia-app/
 make install &>/dev/null
-echo "Build ended, initialing node..."
+echo "Build ended, initializing node..."
 echo "-----------------------------------------------------------------------------"
 celestia-appd init $CELESTIA_NODENAME --chain-id $CELESTIA_CHAIN &>/dev/null
 cp $HOME/networks/devnet-2/genesis.json $HOME/.celestia-app/config/
