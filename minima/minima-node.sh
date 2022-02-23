@@ -1,37 +1,63 @@
-#!/bin/bash
+#!/bin/sh
+set -e
 
-#add ufw rules
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash
+CLEAN_FLAG=''
+PORT=''
+HOST=''
+HOME="/home/minima"
+CONNECTION_HOST=''
+CONNECTION_PORT=''
+SLEEP=''
+RPC=''
+
+
+print_usage() {
+  printf "Usage: Setups a new minima service for the specified port"
+}
+
+while getopts ':xsc::p:r:d:h:' flag; do
+  case "${flag}" in
+    s) SLEEP='true';;
+    x) CLEAN_FLAG='true';;
+    r) RPC="${OPTARG}";;
+    c) CONNECTION_HOST=$(echo $OPTARG | cut -f1 -d:);
+       CONNECTION_PORT=$(echo $OPTARG | cut -f2 -d:);;
+    p) PORT="${OPTARG}";;
+    d) HOME="${OPTARG}";;
+    h) HOST="${OPTARG}";;
+    *) print_usage
+       exit 1 ;;
+  esac
+done
 
 apt update
-apt install mc wget jq libfontconfig1 libxtst6 libxrender1 libxi6 java-common -y
-wget https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-linux_amd64.deb
-dpkg -i zulu11.48.21-ca-jdk11.0.11-linux_amd64.deb
+apt install openjdk-11-jre-headless curl jq -y
 
-wget https://github.com/minima-global/Minima/raw/master/jar/minima.jar
+if [ ! $(getent group minima) ]; then
+  echo "[+] Adding minima group"
+  groupadd -g 9001 minima
+fi
 
-sudo apt install --fix-broken -y
+if ! id -u 9001 > /dev/null 2>&1; then
+  echo "[+] Adding minima user"
+    useradd -r -u 9001 -g 9001 -d $HOME minima
+    mkdir $HOME
+    chown minima:minima $HOME
+fi
 
-sudo tee <<EOF >/dev/null /etc/systemd/journald.conf
-Storage=persistent
-EOF
-sudo systemctl restart systemd-journald
+wget -q -O $HOME"/minima_service.sh" "https://github.com/minima-global/Minima/raw/master/scripts/minima_service.sh"
+chown minima:minima $HOME"/minima_service.sh"
+chmod +x $HOME"/minima_service.sh"
 
-sudo tee <<EOF >/dev/null /etc/systemd/system/minima.service
-[Unit]
-Description=minima
-[Service]
-User=$USER
-ExecStart=/usr/bin/java -Xmx1G -jar $HOME/minima.jar -daemon
-Restart=always
-RestartSec=100
-[Install]
-WantedBy=multi-user.target
-EOF
+CMD="$HOME/minima_service.sh -s $@"
+CRONSTRING="#!/bin/sh
+$CMD"
 
-sudo systemctl daemon-reload
-sudo systemctl enable minima
-sudo systemctl start minima
+echo "$CRONSTRING" > /etc/cron.weekly/minima_$PORT
+chmod a+x /etc/cron.weekly/minima_$PORT
 
-echo -e '\n\e[44mRun command to see logs: \e[0m\n'
-echo 'journalctl -n 100 -f -u minima'
+CMD="$HOME/minima_service.sh $@"
+/bin/sh -c "$CMD"
+
+echo "Install complete - showing logs now -  Ctrl-C to exit logs, minima will keep running"
+journalctl -fn 10 -u minima_$PORT
