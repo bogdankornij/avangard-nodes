@@ -11,14 +11,12 @@ source .profile
 sleep 1
 cd $HOME
 sudo apt install apt-transport-https -y &>/dev/null
-curl -fsSL https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/openvpn-repo-pkg-keyring.gpg
-curl -fsSL https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-focal.list >/etc/apt/sources.list.d/openvpn3.list
-sudo apt update &>/dev/null
-sudo apt install openvpn3 -y &>/dev/null
+
 if [ ! -d $HOME/masa-node-v1.0/ ]; then
   git clone https://github.com/masa-finance/masa-node-v1.0 &>/dev/null
 fi
 cd $HOME/masa-node-v1.0/src
+git checkout v1.02
 make all &>/dev/null
 go get github.com/ethereum/go-ethereum/accounts/keystore &>/dev/null
 cd $HOME/masa-node-v1.0/src/build/bin
@@ -55,17 +53,9 @@ sudo systemctl daemon-reload
 sudo systemctl enable masad
 sudo systemctl restart masad
 
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/masa/connect.sh > $HOME/connect.sh
-chmod +x $HOME/connect.sh
-
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/masa/masa-testnet-dev-client-community.ovpn > $HOME/masa-testnet-dev-client-community.ovpn
-
-sudo tee <<EOF >/dev/null $HOME/cron_connect
-@reboot $HOME/connect.sh >> $HOME/cron_connect.log
-EOF
-
-crontab $HOME/cron_connect
-
-$HOME/connect.sh
-
-echo "ГОТОВО!"
+echo 'ГОТОВО!';
+echo ' ';
+echo '|\  ||  /|';
+echo '--  ||  --';
+echo '|/__/\__\|';
+echo '    \/';
