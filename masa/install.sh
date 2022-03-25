@@ -16,7 +16,7 @@ if [ ! -d $HOME/masa-node-v1.0/ ]; then
   git clone https://github.com/masa-finance/masa-node-v1.0 &>/dev/null
 fi
 cd $HOME/masa-node-v1.0/src
-git checkout v1.02
+git checkout v1.03
 make all &>/dev/null
 go get github.com/ethereum/go-ethereum/accounts/keystore &>/dev/null
 cd $HOME/masa-node-v1.0/src/build/bin
