@@ -2,8 +2,7 @@
 #thanks zvalid.com for https://api.zvalid.com/aptos.sh
 
 echo -e "\e[1m\e[32m1. Updating list of dependencies... \e[0m" && sleep 1
-# curl -s https://raw.githubusercontent.com/razumv/helpers/main/tools/install_docker.sh | bash &>/dev/null
-curl -s https://raw.githubusercontent.com/razumv/helpers/main/tools/install_ufw.sh | bash &>/dev/null
+curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash &>/dev/null
 sudo apt-get install jq mc wget git -y &>/dev/null
 sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 &>/dev/null
 sudo chmod a+x /usr/local/bin/yq
