@@ -23,7 +23,7 @@ cd $HOME/massa
 git checkout -- massa-node/config/config.toml
 git checkout -- massa-node/config/peers.json
 git fetch
-git checkout TEST.8.0
+git checkout TEST.9.1
 
 cd $HOME/massa/massa-node/
 cargo build --release
@@ -39,7 +39,7 @@ cd $HOME/massa/massa-client/
 cargo build --release
 cp $HOME/bk/wallet.dat $HOME/massa/massa-client/wallet.dat
 
-sudo systemctl start massa
+curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/massa/bootstrap-fix.sh | bash
 sleep 10
 echo DONE
 #massa_wallet_address=$(cargo run --release wallet_info | grep Address  |awk '{print $2}')
