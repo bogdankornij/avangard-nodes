@@ -4,7 +4,7 @@ sudo rm -rf $HOME/aptos/identity
 mkdir -p $HOME/aptos/identity
 aptos-operational-tool generate-key --encoding hex --key-type x25519 --key-file $HOME/aptos/identity/private-key.txt
 aptos-operational-tool extract-peer-from-file --encoding hex --key-file $HOME/aptos/identity/private-key.txt --output-file $HOME/aptos/identity/peer-info.yaml
-wget -O $HOME/aptos/seeds.yaml https://raw.githubusercontent.com/razumv/helpers/main/aptos/seeds.yaml
+wget -O $HOME/aptos/seeds.yaml https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/aptos/seeds.yaml
 PEER_ID=$(sed -n 2p $HOME/aptos/identity/peer-info.yaml | sed 's/.$//'  | sed 's/://g')
 PRIVATE_KEY=$(cat $HOME/aptos/identity/private-key.txt)
 WAYPOINT=$(cat $HOME/aptos/waypoint.txt)
