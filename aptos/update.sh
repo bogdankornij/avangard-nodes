@@ -172,4 +172,5 @@ line
 echo -e "${GREEN}Обновление завершено... ${NORMAL}" && sleep 1
 line
 
+echo ''
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/gerb.sh | bash
