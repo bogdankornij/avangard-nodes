@@ -23,7 +23,7 @@ cd $HOME/massa
 git checkout -- massa-node/config/config.toml
 git checkout -- massa-node/config/peers.json
 git fetch
-git checkout TEST.9.1
+git checkout TEST.9.2
 
 cd $HOME/massa/massa-node/
 cargo build --release
@@ -33,6 +33,7 @@ sed -i "s/^bind_private *=.*/bind_private = \"127\.0\.0\.1\:33034\"/" "$HOME/mas
 sed -i "s/^bind_public *=.*/bind_public = \"0\.0\.0\.0\:33035\"/" "$HOME/massa/massa-node/base_config/config.toml"
 sed -i 's/.*routable_ip/# \0/' "$HOME/massa/massa-node/base_config/config.toml"
 sed -i "/\[network\]/a routable_ip=\"$(curl -s ifconfig.me)\"" "$HOME/massa/massa-node/base_config/config.toml"
+
 cp $HOME/bk/node_privkey.key $HOME/massa/massa-node/config/node_privkey.key
 
 cd $HOME/massa/massa-client/
