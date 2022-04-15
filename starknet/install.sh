@@ -22,7 +22,7 @@ sleep 1
 echo "Весь необходимый софт установлен"
 echo "-----------------------------------------------------------------------------"
 
-git clone --branch v0.1.6-alpha https://github.com/eqlabs/pathfinder.git &>/dev/null
+git clone --branch v0.1.8-alpha https://github.com/eqlabs/pathfinder.git &>/dev/null
 cd pathfinder/py &>/dev/null
 python3 -m venv .venv &>/dev/null
 source .venv/bin/activate &>/dev/null
@@ -68,5 +68,3 @@ sudo systemctl restart starknet &>/dev/null
 
 echo "Нода добавлена в автозагрузку на сервере, запущена"
 echo "-----------------------------------------------------------------------------"
-
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/gerb.sh | bash
