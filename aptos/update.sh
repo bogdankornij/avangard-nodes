@@ -11,13 +11,13 @@ function check_stop_old_docker {
   ps=$(docker ps -a | grep "aptos-fullnode-1")
   if [ -z "$ps" ];
   then
-  echo "Старая версия на docker не обнаружена"
+  echo "Старая версия на docker не обнаружена $RED[OK]$NORMAL"
   else
-    echo "Старая версия на docker обнаружена,удаляем и переходим на systemd"
+    echo "Старая версия на docker обнаружена,удаляем и переходим на systemd $RED[OK]$NORMAL"
     docker compose -f $HOME/aptos/docker-compose.yaml down
     docker volume rm aptos_db
     docker rmi -f $(docker images | grep aptos | awk '{print $3}')
-    echo "Удалено, продолжаем обновление"
+    echo "Удалено, продолжаем обновление $RED[OK]$NORMAL"
   fi
 }
 
@@ -70,8 +70,16 @@ function get_vars {
 }
 
 function fix_config {
-  cp $HOME/aptos-core/config/src/config/test_data/public_full_node.yaml $HOME/aptos/public_full_node.yaml
-  /usr/local/bin/yq e -i '.full_node_networks[] +=  { "identity": {"type": "from_config", "key": "'$PRIVATE_KEY'", "peer_id": "'$PEER_ID'"} }' $HOME/aptos/public_full_node.yaml
+  wget -O $HOME/aptos/seeds.yaml https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/aptos/seeds.yaml
+  wget -O $HOME/aptos/public_full_node.yaml https://raw.githubusercontent.com/aptos-labs/aptos-core/main/config/src/config/test_data/public_full_node.yaml
+  sed -i '/network_id: "public"$/a\
+      identity:\
+        type: "from_config"\
+        key: "'$PRIVATE_KEY'"\
+        peer_id: "'$PEER_ID'"' $HOME/aptos/public_full_node.yaml
+
+  /usr/local/bin/yq ea -i 'select(fileIndex==0).full_node_networks[0].seeds = select(fileIndex==1).seeds | select(fileIndex==0)' $HOME/aptos/public_full_node.yaml $HOME/aptos/seeds.yaml
+
   sed -i 's|127.0.0.1|0.0.0.0|' $HOME/aptos/public_full_node.yaml
   sed -i -e "s|genesis_file_location: .*|genesis_file_location: \"$HOME\/aptos\/genesis.blob\"|" $HOME/aptos/public_full_node.yaml
   sed -i -e "s|data_dir: .*|data_dir: \"$HOME\/aptos\/data\"|" $HOME/aptos/public_full_node.yaml
@@ -150,11 +158,11 @@ fi
 if ! command -v aptos-node &> /dev/null
 then
   source_code
-  # build_node
+  #build_node
   wget_node
 else
   fetch_code
-  # build_node
+  #build_node
   wget_node
 fi
 line
@@ -171,6 +179,3 @@ bin_service
 line
 echo -e "${GREEN}Обновление завершено... ${NORMAL}" && sleep 1
 line
-
-echo ''
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/gerb.sh | bash
