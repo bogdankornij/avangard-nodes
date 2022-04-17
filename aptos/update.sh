@@ -130,7 +130,6 @@ function colors {
 
 colors
 line
-logo
 line
 echo -e "${GREEN}Начинаем обновление... ${NORMAL}" && sleep 1
 line

@@ -9,8 +9,8 @@ echo 'export CELESTIA_NODENAME='$CELESTIA_NODENAME >> $HOME/.profile
 echo "-----------------------------------------------------------------------------"
 echo "Устанавливаем софт"
 echo "-----------------------------------------------------------------------------"
-curl -s https://raw.githubusercontent.com/razumv/helpers/main/tools/install_ufw.sh | bash &>/dev/null
-curl -s https://raw.githubusercontent.com/razumv/helpers/main/tools/install_go.sh | bash &>/dev/null
+curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash &>/dev/null
+curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/go.sh | bash &>/dev/null
 sudo apt install --fix-broken -y &>/dev/null
 sudo apt install nano mc wget -y &>/dev/null
 source .profile
