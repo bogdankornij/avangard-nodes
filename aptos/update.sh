@@ -44,12 +44,12 @@ function update_genesis_files {
 }
 
 function build_tools {
-  cargo build -p aptos-operational-tool --release
+  $HOME/.cargo/bin/cargo build -p aptos-operational-tool --release
   mv $HOME/aptos-core/target/release/aptos-operational-tool /usr/local/bin
 }
 
 function build_node {
-  cargo build -p aptos-node --release
+  $HOME/.cargo/bin/cargo build -p aptos-node --release
   mv $HOME/aptos-core/target/release/aptos-node /usr/local/bin
 }
 
@@ -130,7 +130,6 @@ function colors {
 
 colors
 line
-line
 echo -e "${GREEN}Начинаем обновление... ${NORMAL}" && sleep 1
 line
 echo -e "${GREEN}1. Стопаем Aptos... ${NORMAL}" && sleep 1
@@ -144,27 +143,9 @@ update_genesis_files
 line
 echo -e "${GREEN}3. Обновляем код... ${NORMAL}" && sleep 1
 line
-rm -rf $HOME/aptos-core
-if ! command -v aptos-operational-tool &> /dev/null
-then
-  source_code
-  # build_tools
-  wget_tools
-else
-  fetch_code
-  # build_tools
-  wget_tools
-fi
-if ! command -v aptos-node &> /dev/null
-then
-  source_code
-  #build_node
-  wget_node
-else
-  fetch_code
-  #build_node
-  wget_node
-fi
+cd $HOME
+wget_tools
+wget_node
 line
 echo -e "${GREEN}4. Фиксим конфиг... ${NORMAL}" && sleep 1
 line
