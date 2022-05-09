@@ -2,7 +2,28 @@
 echo "applying massa bootstrap fix"
 echo '[bootstrap]
 max_ping = 10000
+bind = "[::]:31245"
+connect_timeout = 15000
+retry_delay = 5000
+read_timeout = 10000
+write_timeout = 10000
+enable_clock_synchronization = false
+cache_duration = 15000
+max_simultaneous_bootstraps = 2
+ip_list_max_size = 10000
+per_ip_min_interval = 3600000
 bootstrap_list = [
+["65.108.59.25:31245", "8FYpHvFb6x4Z7jUhpUbEmMgDLXULCQVXnE6MkZV23YrhVikWZV"],
+["144.76.42.115:31245", "5MmKxMz8p9YVnyXK5JQs6x8589HzEV9T6tv7HtEvzLtGFJGdXr"],
+["167.99.209.179:31245", "7sVgP8eoJ4pCzVEE9Hb1NHt6yqdKR3t5aujc3r2nkJSUkQtLwi"],
+["167.99.217.85:31245", "8iHqyQwCLkL4zdsHQA6H4A74HqSm1Xyv1ZXvQWxJUrt8DmiF1K"],
+["167.99.210.123:31245", "5gYW5G1X7PjY6LFwSwWityv9LKvfupL9NJxiZgbsq9TzS1Uwbp"],
+["194.163.190.88:31245", "6LKtVYrnK8pewHGi3DiA6xqLpxnTKArsNxUo7QqUGho7giBtq9"],
+["176.57.184.77:31245", "7oFSGHLqiXQDLGG22qd6dBkbw65RCc1mDYSsMCPLWFhhTtUDgc"],
+["65.108.67.34:31245", "68v6kNxzhxQfsCoRJZbV4cGfV7YQJq2V36m3BoEMQJoiZ4kTRm"],
+["65.21.121.89:31245", "6MPW6W8FF6y1MkrzqThoLzVpNWfesk7tGfS7RhgUZ8kVSxzYJY"],
+["65.21.141.159:31245", "6xBGqe7SA6w4VxZyBbaryCCtLSbvs9q7ZBjAdCL98KXWReofhZ"],
+["65.21.131.96:31245", "6WMUo6Sxs25j6PLyrFTCbk2uG8SVzRsjmVe6gTXqWH8V8NTggp"],
 ["149.202.86.103:31245", "5GcSNukkKePWpNSjx9STyoEZniJAN4U4EUzdsQyqhuP3WYf6nj"],
 ["149.202.89.125:31245", "5wDwi2GYPniGLzpDfKjXJrmHV3p1rLRmm4bQ9TUWNVkpYmd4Zm"],
 ["158.69.120.215:31245", "5QbsTjSoKzYc8uBbwPCap392CoMQfZ2jviyq492LZPpijctb9c"],

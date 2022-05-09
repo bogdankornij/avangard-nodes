@@ -1,4 +1,6 @@
 #!/bin/bash
+source $HOME/.profile
+source $HOME/.cargo/env
 
 #add ufw rules
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash
@@ -23,7 +25,7 @@ cd $HOME/massa
 git checkout -- massa-node/config/config.toml
 git checkout -- massa-node/config/peers.json
 git fetch
-git checkout TEST.9.2
+git checkout TEST.10.0
 
 cd $HOME/massa/massa-node/
 cargo build --release
