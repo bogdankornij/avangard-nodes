@@ -9,23 +9,23 @@ sudo systemctl stop massa
 rustup toolchain install nightly-2022-01-09
 rustup default nightly-2022-01-09
 #
-cd $HOME
-if [ ! -d $HOME/bk/ ]; then
-	mkdir -p $HOME/bk
-	cp $HOME/massa/massa-node/config/node_privkey.key $HOME/bk/
-	cp $HOME/massa/massa-client/wallet.dat $HOME/bk/
-fi
-if [ ! -e $HOME/massa_bk.tar.gz ]; then
-	tar cvzf massa_bk.tar.gz bk
-fi
-
+# cd $HOME
+# if [ ! -d $HOME/bk/ ]; then
+# 	mkdir -p $HOME/bk
+# 	cp $HOME/massa/massa-node/config/node_privkey.key $HOME/bk/
+# 	cp $HOME/massa/massa-client/wallet.dat $HOME/bk/
+# fi
+# if [ ! -e $HOME/massa_bk.tar.gz ]; then
+# 	tar cvzf massa_bk.tar.gz bk
+# fi
+#
 rm -rf $HOME/massa
 git clone https://github.com/massalabs/massa.git
 cd $HOME/massa
 git checkout -- massa-node/config/config.toml
 git checkout -- massa-node/config/peers.json
 git fetch
-git checkout TEST.10.0
+git checkout TEST.10.1
 
 cd $HOME/massa/massa-node/
 cargo build --release
@@ -41,9 +41,9 @@ cp $HOME/bk/node_privkey.key $HOME/massa/massa-node/config/node_privkey.key
 cd $HOME/massa/massa-client/
 cargo build --release
 cp $HOME/bk/wallet.dat $HOME/massa/massa-client/wallet.dat
-
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/massa/bootstrap-fix.sh | bash
+sudo systemctl restart massa
 sleep 10
+curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/massa/bootstrap-fix.sh | bash
 echo DONE
 #massa_wallet_address=$(cargo run --release wallet_info | grep Address  |awk '{print $2}')
 #cargo run --release -- buy_rolls $massa_wallet_address 1 0
