@@ -8,6 +8,7 @@ sudo apt update
 #curl https://getsubstrate.io -sSf | bash -s -- --fast
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/rust.sh | bash
 
+#
 source $HOME/.cargo/env
 sleep 1
 rustup toolchain install nightly-2022-01-09
@@ -15,7 +16,7 @@ rustup default nightly-2022-01-09
 cd $HOME
 if [ ! -d $HOME/massa/ ]; then
 	git clone https://github.com/massalabs/massa
-	cd $HOME/massa && git checkout TEST.9.1
+	cd $HOME/massa && git checkout TEST.10.1
 fi
 cd $HOME/massa/massa-node/
 cargo build --release
@@ -90,4 +91,6 @@ if [ ! -e $HOME/massa_bk.tar.gz ]; then
 	tar cvzf massa_bk.tar.gz bk
 fi
 
+sudo systemctl restart massa
+sleep 10
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/massa/bootstrap-fix.sh | bash
