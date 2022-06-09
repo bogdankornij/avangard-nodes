@@ -6,8 +6,8 @@ source $HOME/.cargo/env
 curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash
 
 sudo systemctl stop massa
-rustup toolchain install nightly-2022-01-09
-rustup default nightly-2022-01-09
+rustup toolchain install nightly
+rustup default nightly
 #
 # cd $HOME
 # if [ ! -d $HOME/bk/ ]; then
@@ -25,7 +25,7 @@ cd $HOME/massa
 git checkout -- massa-node/config/config.toml
 git checkout -- massa-node/config/peers.json
 git fetch
-git checkout TEST.10.1
+git checkout TEST.11.0
 
 cd $HOME/massa/massa-node/
 cargo build --release
