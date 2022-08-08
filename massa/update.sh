@@ -1,50 +1,93 @@
 #!/bin/bash
-source $HOME/.profile
-source $HOME/.cargo/env
 
-#add ufw rules
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/ufw.sh | bash
+function colors {
+  GREEN="\e[32m"
+  RED="\e[39m"
+  NORMAL="\e[0m"
+}
 
-sudo systemctl stop massa
-rustup toolchain install nightly
-rustup default nightly
+function line {
+  echo -e "${GREEN}-----------------------------------------------------------------------------${NORMAL}"
+}
 
-cd $HOME
-if [ ! -d $HOME/massa_backup/ ]; then
-	mkdir -p $HOME/massa_backup
-	cp $HOME/massa/massa-node/config/node_privkey.key $HOME/massa_backup/
-	cp $HOME/massa/massa-client/wallet.dat $HOME/massa_backup/
-fi
-if [ ! -e $HOME/massa_backup.tar.gz ]; then
-	tar cvzf massa_backup.tar.gz massa_backup
-fi
+function get_env {
+	source $HOME/.profile
+	source $HOME/.cargo/env
+}
 
-rm -rf $HOME/massa
-git clone https://github.com/massalabs/massa.git
-cd $HOME/massa
-git checkout -- massa-node/config/config.toml
-git checkout -- massa-node/config/peers.json
-git fetch
-git checkout TEST.11.3
+function massa_backup {
+	cd $HOME
+	if [ ! -d $HOME/massa_backup/ ]; then
+		mkdir -p $HOME/massa_backup
+		cp $HOME/massa/massa-node/config/node_privkey.key $HOME/massa_backup/
+		cp $HOME/massa/massa-client/wallet.dat $HOME/massa_backup/
+	fi
+	if [ ! -e $HOME/massa_backup.tar.gz ]; then
+		tar cvzf massa_backup.tar.gz massa_backup
+	fi
+}
 
-cd $HOME/massa/massa-node/
-cargo build --release
-#sed -i 's%bootstrap_list *=.*%bootstrap_list = [ [ "62.171.166.224:31245", "8Cf1sQA9VYyUMcDpDRi2TBHQCuMEB7HgMHHdFcsa13m4g6Ee2h",], [ "149.202.86.103:31245", "5GcSNukkKePWpNSjx9STyoEZniJAN4U4EUzdsQyqhuP3WYf6nj",], [ "149.202.89.125:31245", "5wDwi2GYPniGLzpDfKjXJrmHV3p1rLRmm4bQ9TUWNVkpYmd4Zm",], [ "158.69.120.215:31245", "5QbsTjSoKzYc8uBbwPCap392CoMQfZ2jviyq492LZPpijctb9c",], [ "158.69.23.120:31245", "8139kbee951YJdwK99odM7e6V3eW7XShCfX5E2ovG3b9qxqqrq",],]%' "$HOME/massa/massa-node/base_config/config.toml"
-sed -i "s/ip *=.*/ip = \"127\.0\.0\.1\"/" "$HOME/massa/massa-client/base_config/config.toml"
-sed -i "s/^bind_private *=.*/bind_private = \"127\.0\.0\.1\:33034\"/" "$HOME/massa/massa-node/base_config/config.toml"
-sed -i "s/^bind_public *=.*/bind_public = \"0\.0\.0\.0\:33035\"/" "$HOME/massa/massa-node/base_config/config.toml"
-sed -i 's/.*routable_ip/# \0/' "$HOME/massa/massa-node/base_config/config.toml"
-sed -i "/\[network\]/a routable_ip=\"$(curl -s ifconfig.me)\"" "$HOME/massa/massa-node/base_config/config.toml"
+function delete {
+  sudo systemctl stop massa
+  rm -rf $HOME/massa
+}
 
-cp $HOME/massa_backup/node_privkey.key $HOME/massa/massa-node/config/node_privkey.key
+function install {
+  wget https://github.com/massalabs/massa/releases/download/TEST.13.0/massa_TEST.13.0_release_linux.tar.gz
+  tar zxvf massa_TEST.13.0_release_linux.tar.gz -C $HOME/
+}
 
-cd $HOME/massa/massa-client/
-cargo build --release
-cp $HOME/massa_backup/wallet.dat $HOME/massa/massa-client/wallet.dat
-sudo systemctl restart massa
-sleep 10
-curl -s https://raw.githubusercontent.com/bogdankornij/avangard-nodes/master/massa/bootstrap-fix.sh | bash
-echo DONE
-#massa_wallet_address=$(cargo run --release wallet_info | grep Address  |awk '{print $2}')
-#cargo run --release -- buy_rolls $massa_wallet_address 1 0
-#cargo run --release -- register_staking_keys $(cargo run --release wallet_info | grep Private | awk '{print $3}')
+function routable_ip {
+  sed -i 's/.*routable_ip/# \0/' "$HOME/massa/massa-node/base_config/config.toml"
+  sed -i "/\[network\]/a routable_ip=\"$(curl -s ifconfig.me)\"" "$HOME/massa/massa-node/base_config/config.toml"
+}
+
+function replace_bootstraps {
+  	config_path="$HOME/massa/massa-node/base_config/config.toml"
+  	bootstrap_list=`wget -qO- https://raw.githubusercontent.com/SecorD0/Massa/main/bootstrap_list.txt | shuf -n50 | awk '{ print "        "$0"," }'`
+  	len=`wc -l < "$config_path"`
+  	start=`grep -n bootstrap_list "$config_path" | cut -d: -f1`
+  	end=`grep -n "\[optionnal\] port on which to listen" "$config_path" | cut -d: -f1`
+  	end=$((end-1))
+  	first_part=`sed "${start},${len}d" "$config_path"`
+  	second_part="
+      bootstrap_list = [
+  ${bootstrap_list}
+      ]
+  "
+  	third_part=`sed "1,${end}d" "$config_path"`
+  	echo "${first_part}${second_part}${third_part}" > "$config_path"
+  	sed -i -e "s%retry_delay *=.*%retry_delay = 10000%; " "$config_path"
+}
+
+function keys_from_backup {
+	cp $HOME/massa_backup/wallet.dat $HOME/massa/massa-client/wallet.dat
+	cp $HOME/massa_backup/node_privkey.key $HOME/massa/massa-node/config/node_privkey.key
+}
+
+function alias {
+  echo "alias client='cd $HOME/massa/massa-client/ && $HOME/massa/massa-client/massa-client --pwd $massa_pass && cd'" >> ~/.profile
+  echo "alias clientw='cd $HOME/massa/massa-client/ && $HOME/massa/massa-client/massa-client --pwd $massa_pass && cd'" >> ~/.profile
+}
+
+colors
+line
+line
+echo "Читаем переменные, делаем бекап"
+line
+get_env
+massa_backup
+echo "Удаляем старые файлы"
+delete
+line
+echo "Скачиваем новую версию и переписываем конфиг"
+install
+routable_ip
+replace_bootstraps
+alias
+line
+#echo "Восстанавливаемся из бекапа"
+#keys_from_backup
+#line
+sudo systemctl start massa
+echo "Обновление завершено"
